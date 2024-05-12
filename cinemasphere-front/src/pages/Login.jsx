@@ -4,10 +4,18 @@ import background from "../assets/login.jpg";
 import { useNavigate } from "react-router-dom";
 import BackgroundImage from "../components/BackgroundImage";
 import Header from "../components/Header";
-import { supabase } from "../lib/supabase";
+// import { supabase } from "../lib/supabase";
 import { useState } from "react";
+import { createClient } from '@supabase/supabase-js'
 
 const Login =() => {
+
+  const supabase = createClient(
+    process.env.REACT_APP_SUPABASE_URL,
+    process.env.REACT_APP_SUPABASE_ANON_KEY
+  )
+  console.log(REACT_APP_SUPABASE_URL);
+
   const [data, setData] = useState(
     {
         email: '',
