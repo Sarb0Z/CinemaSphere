@@ -19,14 +19,15 @@ const supabase = createClient(
 
 app.get('/Users', async (req, res) => {
     const {data, error} = await supabase
-        .from('Profiles')
+        .from('profiles')
         .select()
     res.send(data);
+    if (error) console.log(error)
 });
 
 app.get('/Users/:id', async (req, res) => {
     const {data, error} = await supabase
-        .from('Profiles')
+        .from('profiles')
         .select()
         .is('id', req.params.id)
     res.send(data);
@@ -35,11 +36,14 @@ app.get('/Users/:id', async (req, res) => {
 
 app.put('/Users/:id', async (req, res) => {
     const {error} = await supabase
-        .from('Profiles')
+        .from('profiles')
         .update({
-            name: req.body.name,
-            phone_number: req.body.phone_number,
-            email_address: req.body.email_address,
+            username: req.body.username,
+            full_name: req.body.full_name,
+            avatar_url: req.body.avatar_url,
+            website: req.body.website,
+            // phone_number: req.body.phone_number,
+            // email_address: req.body.email_address,
         })
         .eq('id', req.params.id)
     if (error) {
@@ -49,17 +53,19 @@ app.put('/Users/:id', async (req, res) => {
 });
 
 
-app.get('/Users', async (req, res) => {
+app.get('/Movies', async (req, res) => {
     const {data, error} = await supabase
-        .from('Profiles')
+        .from('movies')
         .select()
     res.send(data);
+    if (error) console.log(error)
+
 });
 
 
 app.get('/Movies/:id', async (req, res) => {
     const {data, error} = await supabase
-        .from('Movies')
+        .from('movies')
         .select()
         .is('id', req.params.id)
     res.send(data);
@@ -67,7 +73,7 @@ app.get('/Movies/:id', async (req, res) => {
 
 app.post('/Movies', async (req, res) => {
     const {error} = await supabase
-        .from('Movies')
+        .from('movies')
         .insert({
             name: req.body.name,
             description: req.body.description,
@@ -81,7 +87,7 @@ app.post('/Movies', async (req, res) => {
 
 app.put('/Movies/:id', async (req, res) => {
     const {error} = await supabase
-        .from('Movies')
+        .from('movies')
         .update({
             name: req.body.name,
             description: req.body.description,
@@ -96,7 +102,69 @@ app.put('/Movies/:id', async (req, res) => {
 
 app.delete('/Movies/:id', async (req, res) => {
     const {error} = await supabase
-        .from('Movies')
+        .from('movies')
+        .delete()
+        .eq('id', req.params.id)
+    if (error) {
+        res.send(error);
+    }
+    res.send("deleted!!")
+
+});
+
+
+app.get('/Reviews', async (req, res) => {
+    const {data, error} = await supabase
+        .from('reviews')
+        .select()
+    res.send(data);
+    if (error) console.log(error)
+
+});
+
+
+app.get('/Reviews/:id', async (req, res) => {
+    const {data, error} = await supabase
+        .from('reviews')
+        .select()
+        .is('id', req.params.id)
+    res.send(data);
+});
+
+app.post('/Reviews', async (req, res) => {
+    const {error} = await supabase
+        .from('reviews')
+        .insert({
+            description: req.body.description,
+            rating: req.body.rating,
+            created_by: req.body.created_by,
+            movie_id: req.body.movie_id,
+        })
+    if (error) {
+        res.send(error);
+    }
+    res.send("created!!");
+});
+
+app.put('/Reviews/:id', async (req, res) => {
+    const {error} = await supabase
+        .from('reviews')
+        .update({
+            description: req.body.description,
+            rating: req.body.rating,
+            created_by: req.body.created_by,
+            movie_id: req.body.movie_id,
+        })
+        .eq('id', req.params.id)
+    if (error) {
+        res.send(error);
+    }
+    res.send("updated!!");
+});
+
+app.delete('/Reviews/:id', async (req, res) => {
+    const {error} = await supabase
+        .from('reviews')
         .delete()
         .eq('id', req.params.id)
     if (error) {
