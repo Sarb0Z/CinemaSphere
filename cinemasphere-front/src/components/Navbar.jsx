@@ -1,4 +1,3 @@
-import { onAuthStateChanged,signOut } from "firebase/auth";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -6,6 +5,8 @@ import logo from "../assets/logo.png";
 import { firebaseAuth } from "../utils/firebase-config";
 import { FaPowerOff, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabase";
+
 export default function Navbar({ isScrolled }) {
   const [showSearch, setShowSearch] = useState(false);
   const [inputHover, setInputHover] = useState(false);
@@ -16,9 +17,11 @@ export default function Navbar({ isScrolled }) {
     { name: "My List", link: "/mylist" },
   ];
   const navigate = useNavigate()
-  // onAuthStateChanged(firebaseAuth, (currentUser) => {
-  //   if (!currentUser) navigate("/login");
-  // });
+  const signOut = () => {
+    supabase.auth.signOut()
+    navigate('/login')
+  }
+
   return (
     <Container>
       <nav className={`${isScrolled ? "scrolled" : ""} flex`}>
@@ -59,7 +62,7 @@ export default function Navbar({ isScrolled }) {
               }}
             />
           </div>
-          <button onClick={() => signOut(firebaseAuth)}>
+          <button onClick={() => signOut()}>
             <FaPowerOff />
           </button>
         </div>
