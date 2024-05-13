@@ -16,9 +16,9 @@ export default function Navbar({ isScrolled }) {
     { name: "My List", link: "/mylist" },
   ];
   const navigate = useNavigate()
-  onAuthStateChanged(firebaseAuth, (currentUser) => {
-    if (!currentUser) navigate("/login");
-  });
+  // onAuthStateChanged(firebaseAuth, (currentUser) => {
+  //   if (!currentUser) navigate("/login");
+  // });
   return (
     <Container>
       <nav className={`${isScrolled ? "scrolled" : ""} flex`}>

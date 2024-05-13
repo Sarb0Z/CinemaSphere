@@ -32,10 +32,10 @@ function TVShows() {
 
   const [user, setUser] = useState(undefined);
 
-  onAuthStateChanged(firebaseAuth, (currentUser) => {
-    if (currentUser) setUser(currentUser.uid);
-    else navigate("/login");
-  });
+  // onAuthStateChanged(firebaseAuth, (currentUser) => {
+  //   if (currentUser) setUser(currentUser.uid);
+  //   else navigate("/login");
+  // });
 
   window.onscroll = () => {
     setIsScrolled(window.pageYOffset === 0 ? false : true);

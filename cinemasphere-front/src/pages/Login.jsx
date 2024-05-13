@@ -4,46 +4,40 @@ import background from "../assets/login.jpg";
 import { useNavigate } from "react-router-dom";
 import BackgroundImage from "../components/BackgroundImage";
 import Header from "../components/Header";
-// import { supabase } from "../lib/supabase";
-import { useState } from "react";
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from "../lib/supabase";
+import { useState, useEffect } from "react";
 
 const Login =() => {
 
-  const supabase = createClient(
-    process.env.REACT_APP_SUPABASE_URL,
-    process.env.REACT_APP_SUPABASE_ANON_KEY
-  )
-  console.log(REACT_APP_SUPABASE_URL);
-
-  const [data, setData] = useState(
-    {
-        email: '',
-        password: ''
-    }
-  )
-
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-      const { name, value } = e.target;
-      setData((prev) => ({
-          ...prev,
-          [name]: value
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-      }));
-  }
+  useEffect(() => {
+    const getSession = async () => {
+      await supabase.auth.getSession().then(({data}) => {
+        if (data) {
+          console.log(data);
+          navigate("/");
+        }
+      });
+
+    };
+    getSession();
+  }, []);
 
   const login = async () => {
       try {
-        let { data: dataUser, error } = await supabase.auth.signInWithPassword({
-            email: data.email,
-            password: data.password
+        let { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password
         
         })
-        if (dataUser) {
-            console.log(dataUser);
+        if (data) {
+            console.log(data);
             navigate("/");
+
         }
       }
       
@@ -66,14 +60,14 @@ const Login =() => {
               <input
                 type="text"
                 placeholder="Email"
-                onChange={handleChange}
-                value={data.email}
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
               />
               <input
                 type="password"
                 placeholder="Password"
-                onChange={handleChange}
-                value={data.password}
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
               />
               <button onClick={login}>Login to your account</button>
             </div>

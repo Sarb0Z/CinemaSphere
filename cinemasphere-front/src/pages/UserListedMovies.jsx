@@ -16,10 +16,10 @@ export default function UserListedMovies() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [email, setEmail] = useState(undefined);
 
-  onAuthStateChanged(firebaseAuth, (currentUser) => {
-    if (currentUser) setEmail(currentUser.email);
-    else navigate("/login");
-  });
+  // onAuthStateChanged(firebaseAuth, (currentUser) => {
+  //   if (currentUser) setEmail(currentUser.email);
+  //   else navigate("/login");
+  // });
 
   useEffect(() => {
     if (email) {
