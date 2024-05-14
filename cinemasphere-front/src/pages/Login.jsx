@@ -14,18 +14,25 @@ const Login =() => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    const getSession = async () => {
-      await supabase.auth.getSession().then(({data}) => {
-        if (data) {
-          console.log(data);
-          navigate("/");
-        }
-      });
+  const [session, setSession] = useState(null)
 
-    };
-    getSession();
-  }, []);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+  if (session) {
+    navigate("/");
+  }
+
 
   const login = async () => {
       try {

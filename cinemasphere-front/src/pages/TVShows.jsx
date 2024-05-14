@@ -9,6 +9,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchMovies, getGenres } from "../store";
 import SelectGenre from "../components/SelectGenre";
 import Slider from "../components/Slider";
+import { supabase } from "../lib/supabase";
+
 
 function TVShows() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -30,12 +32,24 @@ function TVShows() {
     }
   }, [genresLoaded]);
 
-  const [user, setUser] = useState(undefined);
+  const [session, setSession] = useState(null)
 
-  // onAuthStateChanged(firebaseAuth, (currentUser) => {
-  //   if (currentUser) setUser(currentUser.uid);
-  //   else navigate("/login");
-  // });
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+  if (!session) {
+    navigate("/login");
+  }
 
   window.onscroll = () => {
     setIsScrolled(window.pageYOffset === 0 ? false : true);
@@ -44,7 +58,7 @@ function TVShows() {
 
   return (
     <Container>
-      <Navbar isScrolled={isScrolled} />
+      <Navbar isScrolled={isScrolled} sessionData={session}/>
       <div className="data">
         <SelectGenre genres={genres} type="tv" />
         {movies.length ? (

@@ -3,20 +3,21 @@ import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import backgroundImage from "../assets/home.jpg";
 import MovieLogo from "../assets/homeTitle.webp";
-
-import { onAuthStateChanged } from "firebase/auth";
-import { firebaseAuth } from "../utils/firebase-config";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchMovies, getGenres } from "../store";
 import { FaPlay } from "react-icons/fa";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import Slider from "../components/Slider";
+import { supabase } from "../lib/supabase";
+import AddMovieModal from "../components/AddMovieModal";
+
 function Netflix() {
   const [isScrolled, setIsScrolled] = useState(false);
   const movies = useSelector((state) => state.netflix.movies);
   const genres = useSelector((state) => state.netflix.genres);
   const genresLoaded = useSelector((state) => state.netflix.genresLoaded);
+  const [isOpen, setIsOpen] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -31,10 +32,25 @@ function Netflix() {
     }
   }, [genresLoaded]);
 
-  // onAuthStateChanged(firebaseAuth, (currentUser) => {
-  //   if (!currentUser) navigate("/login");
-  // });
+  const [session, setSession] = useState(null)
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+  // if (!session) {
+  //   navigate("/login");
+  // }
+  
   window.onscroll = () => {
     setIsScrolled(window.pageYOffset === 0 ? false : true);
     return () => (window.onscroll = null);
@@ -42,7 +58,7 @@ function Netflix() {
 
   return (
     <Container>
-      <Navbar isScrolled={isScrolled} />
+      <Navbar isScrolled={isScrolled} sessionData={session}/>
       <div className="hero">
         <img
           src={backgroundImage}
@@ -65,6 +81,17 @@ function Netflix() {
               <AiOutlineInfoCircle />
               More Info
             </button>
+            {session && (
+              isOpen ? (
+                <AddMovieModal />
+              ) : (
+              <button
+                onClick={() => setIsOpen(!isOpen) }
+                className="flex j-center a-center"
+              >
+              </button>
+            )
+            )}
           </div>
         </div>
       </div>

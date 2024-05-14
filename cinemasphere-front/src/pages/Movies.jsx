@@ -30,21 +30,24 @@ function MoviePage() {
     }
   }, [genresLoaded]);
 
+  const [session, setSession] = useState(null)
 
   useEffect(() => {
-    const getSession = async () => {
-      await supabase.auth.getSession().then(({data}) => {
-        if (data) {
-          console.log(data);
-        } else {
-          navigate("/login");
-        }
-      });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
 
-    };
-    getSession();
-  }, []);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
 
+    return () => subscription.unsubscribe()
+  }, [])
+  if (!session) {
+    navigate("/login");
+  }
 
 
   window.onscroll = () => {
@@ -55,7 +58,7 @@ function MoviePage() {
   return (
     <Container>
       <div className="navbar">
-        <Navbar isScrolled={isScrolled} />
+        <Navbar isScrolled={isScrolled} sessionData={session}/>
       </div>
       <div className="data">
         <SelectGenre genres={genres} type="movie" />

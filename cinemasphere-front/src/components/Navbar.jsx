@@ -1,44 +1,42 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import logo from "../assets/logo.png";
-import { firebaseAuth } from "../utils/firebase-config";
 import { FaPowerOff, FaSearch } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
-export default function Navbar({ isScrolled }) {
+export default function Navbar({ isScrolled, sessionData }) {
   const [showSearch, setShowSearch] = useState(false);
   const [inputHover, setInputHover] = useState(false);
   const links = [
-    { name: "Home", link: "/" },
     { name: "TV Shows", link: "/tv" },
     { name: "Movies", link: "/movies" },
     { name: "My List", link: "/mylist" },
   ];
-  const navigate = useNavigate()
   const signOut = () => {
     supabase.auth.signOut()
-    navigate('/login')
   }
-
   return (
     <Container>
       <nav className={`${isScrolled ? "scrolled" : ""} flex`}>
         <div className="left flex a-center">
-          <div className="brand flex a-center j-center">
-            <img src={logo} alt="Logo" />
-          </div>
-          <ul className="links flex">
-            {links.map(({ name, link }) => {
-              return (
-                <li key={name}>
-                  <Link to={link}>{name}</Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+          <Link to="/">
+              <div className="brand flex a-center j-center">
+                <img src={logo} alt="Logo" />
+              </div>
+          </Link>
+            {sessionData && (
+            <ul className="links flex">
+              {links.map(({ name, link }) => {
+                return (
+                  <li key={name}>
+                    <Link to={link}>{name}</Link>
+                  </li>
+                );
+              })}
+            </ul>
+            )}
+          </div>   
         <div className="right flex a-center">
           <div className={`search ${showSearch ? "show-search" : ""}`}>
             <button
@@ -62,9 +60,16 @@ export default function Navbar({ isScrolled }) {
               }}
             />
           </div>
+          {sessionData ? (
           <button onClick={() => signOut()}>
             <FaPowerOff />
           </button>
+          ) : (
+          <Link to="/login" className="links flex">
+            <button>Sign In</button>
+          </Link>
+          )}
+
         </div>
       </nav>
     </Container>
@@ -158,6 +163,18 @@ const Container = styled.div`
           opacity: 1;
           visibility: visible;
           padding: 0.3rem;
+        }
+      }
+      .links {
+        button {
+          padding: 0.5rem 1rem;
+          border: none;
+          background-color : #e50914;
+          border-radius: 0.2rem;
+          font-weight: bolder;
+          font-size: 1rem;
+          color:white;
+          cursor : pointer;
         }
       }
     }

@@ -1,13 +1,11 @@
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-} from "firebase/auth";
-import React, { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import BackgroundImage from "../components/BackgroundImage";
 import Header from "../components/Header";
-import { firebaseAuth } from "../utils/firebase-config";
+import { supabase } from "../lib/supabase";
+
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [formValues, setFormValues] = useState({
@@ -16,18 +14,44 @@ function Signup() {
   });
   const navigate = useNavigate();
 
-  const handleSignIn = async () => {
-    try {
-      const { email, password } = formValues;
-      await createUserWithEmailAndPassword(firebaseAuth, email, password);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [session, setSession] = useState(null)
 
-  onAuthStateChanged(firebaseAuth, (currentUser) => {
-    if (currentUser) navigate("/");
-  });
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+  if (session) {
+    navigate("/");
+  }
+
+
+  const signup = async () => {
+      try {
+        let { data, error } = await supabase.auth.signUp({
+            email: formValues.email,
+            password: formValues.password
+        
+        })
+        if (data) {
+            console.log(data);
+            navigate("/");
+
+        }
+      }
+      
+      catch (error) {
+          console.log(error)
+      }
+  }
 
   return (
     <Container showPassword={showPassword}>
@@ -73,7 +97,7 @@ function Signup() {
               <button onClick={() => setShowPassword(true)}>Get Started</button>
             )}
           </div>
-          {showPassword && <button onClick={handleSignIn}>Sign Up</button>}
+          {showPassword && <button onClick={signup}>Sign Up</button>}
         </div>
       </div>
     </Container>

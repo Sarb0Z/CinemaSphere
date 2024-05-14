@@ -1,13 +1,13 @@
-import axios from "axios";
-import { onAuthStateChanged } from "firebase/auth";
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { firebaseAuth } from "../utils/firebase-config";
 import Card from "../components/Card";
 import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import { getUsersLikedMovies } from "../store";
 import { useDispatch, useSelector } from "react-redux";
+import { supabase } from "../lib/supabase";
+
 
 export default function UserListedMovies() {
   const movies = useSelector((state) => state.netflix.movies);
@@ -16,10 +16,24 @@ export default function UserListedMovies() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [email, setEmail] = useState(undefined);
 
-  // onAuthStateChanged(firebaseAuth, (currentUser) => {
-  //   if (currentUser) setEmail(currentUser.email);
-  //   else navigate("/login");
-  // });
+  const [session, setSession] = useState(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+  if (!session) {
+    navigate("/login");
+  }
 
   useEffect(() => {
     if (email) {
@@ -34,7 +48,7 @@ export default function UserListedMovies() {
 
   return (
     <Container>
-      <Navbar isScrolled={isScrolled} />
+      <Navbar isScrolled={isScrolled} sessionData = {session}/>
       <div className="content flex column">
         <h1>My List</h1>
         <div className="grid flex">
