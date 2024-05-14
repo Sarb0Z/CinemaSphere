@@ -106,7 +106,7 @@ import {
     async (user_id) => {
       const {
         data: { movies },
-      } = await axios.get(`http://localhost:5000/api/Movies/${user_id}`);
+      } = await axios.get(`http://localhost:5000/api/movies/${user_id}`);
       return movies;
     }
   );
@@ -117,6 +117,19 @@ import {
       const {
         data: { movies },
       } = await axios.put("http://localhost:5000/api/user/remove", {
+        email,
+        movieId,
+      });
+      return movies;
+    }
+  );
+
+  export const removeUserMovie = createAsyncThunk(
+    "netflix/deleteLiked",
+    async ({ movieId }) => {
+      const {
+        data: { movies },
+      } = await axios.put(`http://localhost:5000/api/movies/${movieId}`, {
         email,
         movieId,
       });
