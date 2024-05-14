@@ -75,6 +75,21 @@ import {
       );
     }
   );
+
+  export const addUserMovie = createAsyncThunk(
+    "netflix/addMovie",
+    async ({ name, description, user_id }, { rejectWithValue }) => {
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/movies",
+          { name, description, user_id }
+        );
+        return response.data;
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  );
   
   export const getUsersLikedMovies = createAsyncThunk(
     "netflix/getLiked",
@@ -82,6 +97,16 @@ import {
       const {
         data: { movies },
       } = await axios.get(`http://localhost:5000/api/user/liked/${email}`);
+      return movies;
+    }
+  );
+
+  export const getUserMovies = createAsyncThunk(
+    "netflix/getLiked",
+    async (user_id) => {
+      const {
+        data: { movies },
+      } = await axios.get(`http://localhost:5000/api/Movies/${user_id}`);
       return movies;
     }
   );
@@ -98,6 +123,7 @@ import {
       return movies;
     }
   );
+
   
   const NetflixSlice = createSlice({
     name: "Netflix",

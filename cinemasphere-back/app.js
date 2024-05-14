@@ -67,7 +67,7 @@ app.get('/Movies/:id', async (req, res) => {
     const {data, error} = await supabase
         .from('movies')
         .select()
-        .is('id', req.params.id)
+        .is('user_id', req.params.id)
     res.send(data);
 });
 
