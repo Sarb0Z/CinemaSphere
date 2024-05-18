@@ -76,20 +76,20 @@ import {
     }
   );
 
-  export const addUserMovie = createAsyncThunk(
-    "netflix/addMovie",
-    async ({ name, description, user_id }, { rejectWithValue }) => {
-      try {
-        const response = await axios.post(
-          "http://localhost:5000/api/movies",
-          { name, description, user_id }
-        );
-        return response.data;
-      } catch (error) {
-        return rejectWithValue(error.response.data);
-      }
-    }
-  );
+  // export const addUserMovie = createAsyncThunk(
+  //   "netflix/addMovie",
+  //   async ({ name, description, user_id }, { rejectWithValue }) => {
+  //     try {
+  //       const response = await axios.post(
+  //         "http://localhost:5000/api/movies",
+  //         { name, description, user_id }
+  //       );
+  //       return response.data;
+  //     } catch (error) {
+  //       return rejectWithValue(error.response.data);
+  //     }
+  //   }
+  // );
   
   export const getUsersLikedMovies = createAsyncThunk(
     "netflix/getLiked",
@@ -101,15 +101,15 @@ import {
     }
   );
 
-  export const getUserMovies = createAsyncThunk(
-    "netflix/getLiked",
-    async (user_id) => {
-      const {
-        data: { movies },
-      } = await axios.get(`http://localhost:5000/api/movies/${user_id}`);
-      return movies;
-    }
-  );
+  // export const getUserMovies = createAsyncThunk(
+  //   "netflix/getLiked",
+  //   async (user_id) => {
+  //     const {
+  //       data: { movies },
+  //     } = await axios.get(`http://localhost:5000/api/Movies/${user_id}`);
+  //     return movies;
+  //   }
+  // );
   
   export const removeMovieFromLiked = createAsyncThunk(
     "netflix/deleteLiked",
@@ -124,18 +124,18 @@ import {
     }
   );
 
-  export const removeUserMovie = createAsyncThunk(
-    "netflix/deleteLiked",
-    async ({ movieId }) => {
-      const {
-        data: { movies },
-      } = await axios.put(`http://localhost:5000/api/movies/${movieId}`, {
-        email,
-        movieId,
-      });
-      return movies;
-    }
-  );
+  // export const removeUserMovie = createAsyncThunk(
+  //   "netflix/deleteLiked",
+  //   async ({ movieId }) => {
+  //     const {
+  //       data: { movies },
+  //     } = await axios.put(`http://localhost:5000/api/Movies/${movieId}`, {
+  //       email,
+  //       movieId,
+  //     });
+  //     return movies;
+  //   }
+  // );
 
   
   const NetflixSlice = createSlice({

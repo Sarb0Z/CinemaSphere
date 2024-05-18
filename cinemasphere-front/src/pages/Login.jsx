@@ -26,7 +26,6 @@ const Login =() => {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
     })
-
     return () => subscription.unsubscribe()
   }, [])
   if (session) {

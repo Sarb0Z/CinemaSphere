@@ -2,6 +2,7 @@ import express from 'express';
 import {createClient} from '@supabase/supabase-js'
 import morgan from 'morgan'
 import bodyParser from "body-parser";
+import cors from 'cors';
 
 const app = express();
 
@@ -12,12 +13,14 @@ app.use(morgan('combined'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+app.use(cors())
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 );
 
-app.get('/Users', async (req, res) => {
+app.get('/api/Users', async (req, res) => {
     const {data, error} = await supabase
         .from('profiles')
         .select()
@@ -25,7 +28,7 @@ app.get('/Users', async (req, res) => {
     if (error) console.log(error)
 });
 
-app.get('/Users/:id', async (req, res) => {
+app.get('/api/Users/:id', async (req, res) => {
     const {data, error} = await supabase
         .from('profiles')
         .select()
@@ -34,7 +37,7 @@ app.get('/Users/:id', async (req, res) => {
 });
 
 
-app.put('/Users/:id', async (req, res) => {
+app.put('/api/Users/:id', async (req, res) => {
     const {error} = await supabase
         .from('profiles')
         .update({
@@ -53,7 +56,7 @@ app.put('/Users/:id', async (req, res) => {
 });
 
 
-app.get('/Movies', async (req, res) => {
+app.get('/api/Movies', async (req, res) => {
     const {data, error} = await supabase
         .from('movies')
         .select()
@@ -63,21 +66,23 @@ app.get('/Movies', async (req, res) => {
 });
 
 
-app.get('/Movies/:id', async (req, res) => {
+app.get('/api/Movies/:user_id', async (req, res) => {
     const {data, error} = await supabase
         .from('movies')
         .select()
-        .is('user_id', req.params.id)
+        .match({user_id: req.params.user_id})
     res.send(data);
 });
 
-app.post('/Movies', async (req, res) => {
+app.post('/api/Movies', async (req, res) => {
     const {error} = await supabase
         .from('movies')
         .insert({
             name: req.body.name,
             description: req.body.description,
             user_id: req.body.user_id,
+            avatar_url: req.body.avatar_url,
+            genres: req.body.genres,
         })
     if (error) {
         res.send(error);
@@ -85,13 +90,15 @@ app.post('/Movies', async (req, res) => {
     res.send("created!!");
 });
 
-app.put('/Movies/:id', async (req, res) => {
+app.put('/api/Movies/:id', async (req, res) => {
     const {error} = await supabase
         .from('movies')
         .update({
             name: req.body.name,
             description: req.body.description,
             user_id: req.body.user_id,
+            avatar_url: req.body.avatar_url,
+            genres: req.body.genres,
         })
         .eq('id', req.params.id)
     if (error) {
@@ -100,7 +107,7 @@ app.put('/Movies/:id', async (req, res) => {
     res.send("updated!!");
 });
 
-app.delete('/Movies/:id', async (req, res) => {
+app.delete('/api/Movies/:id', async (req, res) => {
     const {error} = await supabase
         .from('movies')
         .delete()
@@ -113,7 +120,7 @@ app.delete('/Movies/:id', async (req, res) => {
 });
 
 
-app.get('/Reviews', async (req, res) => {
+app.get('/api/Reviews', async (req, res) => {
     const {data, error} = await supabase
         .from('reviews')
         .select()
@@ -123,7 +130,7 @@ app.get('/Reviews', async (req, res) => {
 });
 
 
-app.get('/Reviews/:id', async (req, res) => {
+app.get('/api/Reviews/:id', async (req, res) => {
     const {data, error} = await supabase
         .from('reviews')
         .select()
@@ -131,7 +138,7 @@ app.get('/Reviews/:id', async (req, res) => {
     res.send(data);
 });
 
-app.post('/Reviews', async (req, res) => {
+app.post('/api/Reviews', async (req, res) => {
     const {error} = await supabase
         .from('reviews')
         .insert({
@@ -146,7 +153,7 @@ app.post('/Reviews', async (req, res) => {
     res.send("created!!");
 });
 
-app.put('/Reviews/:id', async (req, res) => {
+app.put('/api/Reviews/:id', async (req, res) => {
     const {error} = await supabase
         .from('reviews')
         .update({
@@ -162,7 +169,7 @@ app.put('/Reviews/:id', async (req, res) => {
     res.send("updated!!");
 });
 
-app.delete('/Reviews/:id', async (req, res) => {
+app.delete('/api/Reviews/:id', async (req, res) => {
     const {error} = await supabase
         .from('reviews')
         .delete()
@@ -173,6 +180,7 @@ app.delete('/Reviews/:id', async (req, res) => {
     res.send("deleted!!")
 
 });
+
 
 app.get('/', (req, res) => {
     res.send("Hello I am working my friend Supabase <3");
@@ -182,6 +190,6 @@ app.get('*', (req, res) => {
     res.send("Hello again I am working my friend to the moon and behind <3");
 });
 
-app.listen(3000, () => {
-    console.log(`> Ready on http://localhost:3000`);
+app.listen(5000, () => {
+    console.log(`> Ready on http://localhost:5000`);
 });

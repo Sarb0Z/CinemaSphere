@@ -12,7 +12,7 @@ import Slider from "../components/Slider";
 import { supabase } from "../lib/supabase";
 import AddMovieModal from "../components/AddMovieModal";
 
-function Netflix() {
+function CowlarMovies() {
   const [isScrolled, setIsScrolled] = useState(false);
   const movies = useSelector((state) => state.netflix.movies);
   const genres = useSelector((state) => state.netflix.genres);
@@ -86,9 +86,12 @@ function Netflix() {
                 <AddMovieModal />
               ) : (
               <button
-                onClick={() => setIsOpen(!isOpen) }
+                onClick={() => navigate(
+                  "/mylist"
+                ) }
                 className="flex j-center a-center"
               >
+                View Custom Movies
               </button>
             )
             )}
@@ -149,4 +152,4 @@ const Container = styled.div`
     }
   }
 `;
-export default Netflix;
+export default CowlarMovies;
