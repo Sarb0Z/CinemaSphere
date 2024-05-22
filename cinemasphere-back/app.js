@@ -4,8 +4,9 @@ import morgan from 'morgan'
 import bodyParser from "body-parser";
 import cors from 'cors';
 
-const app = express();
+// TODO: Ensure only valid users can make changes
 
+const app = express();
 
 // using morgan for logs
 app.use(morgan('combined'));
@@ -65,12 +66,39 @@ app.get('/api/Movies', async (req, res) => {
 
 });
 
+app.get('/api/MoviesRanked', async (req, res) => {
+    const { data, error } = await supabase
+        .from('movies')
+        .select('*, reviews:reviews(id, description, rating, created_by, movie_id)')
+        .order('reviews.length', { ascending: false }); // Order by number of reviews
+
+    if (error) {
+        console.log(error);
+        res.status(500).send('Error fetching movies');
+    } else {
+        // Add ranking logic
+        const rankedMovies = data.map((movie, index) => ({
+            ...movie,
+            rank: index + 1, // Rank starts from 1
+        }));
+        res.send(rankedMovies);
+    }
+});
+
 
 app.get('/api/Movies/:user_id', async (req, res) => {
     const {data, error} = await supabase
         .from('movies')
         .select()
         .match({user_id: req.params.user_id})
+    res.send(data);
+});
+
+app.get('/api/Movies/movie_id/:id', async (req, res) => {
+    const {data, error} = await supabase
+        .from('movies')
+        .select()
+        .match({id: req.params.id})
     res.send(data);
 });
 
@@ -130,11 +158,11 @@ app.get('/api/Reviews', async (req, res) => {
 });
 
 
-app.get('/api/Reviews/:id', async (req, res) => {
+app.get('/api/Reviews/:movie_id', async (req, res) => {
     const {data, error} = await supabase
         .from('reviews')
         .select()
-        .is('id', req.params.id)
+        .match({movie_id: req.params.movie_id})
     res.send(data);
 });
 

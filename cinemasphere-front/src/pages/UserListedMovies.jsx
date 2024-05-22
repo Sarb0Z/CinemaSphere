@@ -66,11 +66,19 @@ const UserListedMovies = () => {
   };
 
   const handleEditMovie = (movie) => {
+    if (movie.user_id !== session.user.id) {
+      // Display error message or redirect
+      return;
+    }
     setSelectedMovie(movie);
     setShowModal(true);
   };
 
   const handleUpdateMovie = async (updatedMovie) => {
+    // if (updatedMovie.user_id !== session.user.id) {
+    //   // Display error message or redirect
+    //   return;
+    // }
     try {
       const response = await axios.put(
         `${process.env.REACT_APP_BACKEND_URL}/Movies/${updatedMovie.id}`,

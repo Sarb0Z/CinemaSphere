@@ -8,12 +8,14 @@ import { BiChevronDown } from "react-icons/bi";
 import { BsCheck } from "react-icons/bs";
 import { ImCross } from "react-icons/im";
 import { MdModeEditOutline } from "react-icons/md";
+import { MdOutlineRateReview } from "react-icons/md";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { removeMovieFromLiked } from "../store";
 import video from "../assets/video.mp4";
 import movie_1 from "../assets/posters/movie_1.jpg";
 import movie_2 from "../assets/posters/movie_2.jpg";
+
 
 export default React.memo(function Card({ index, movieData, isLiked = false, handleDeleteMovie, handleEditMovie }) {
   const navigate = useNavigate();
@@ -72,6 +74,9 @@ export default React.memo(function Card({ index, movieData, isLiked = false, han
                     onClick={() => handleEditMovie(movieData)}
                   />
                 )}
+                <button onClick={() => navigate(`/reviews/${movieData.id}`)}>
+                  <MdOutlineRateReview title="Review" />
+                </button>
               </div>
               <div className="info">
                 <BiChevronDown title="More Info" />

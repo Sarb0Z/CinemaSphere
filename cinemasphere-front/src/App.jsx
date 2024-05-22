@@ -7,6 +7,7 @@ import Signup from "./pages/Signup";
 import TVShows from "./pages/TVShows";
 import UserListedMovies from "./pages/UserListedMovies";
 import CowlarMovies from "./pages/CowlarMovies";
+import MovieReviews from "./pages/MovieReviews";
 
 export default function App() {
   return (
@@ -20,6 +21,8 @@ export default function App() {
         <Route exact path="/new" element={<Player />} />
         <Route exact path="/mylist" element={<UserListedMovies />} />
         <Route exact path="/" element={<CowlarMovies />} />
+        <Route exact path="/reviews/:movieId" element={<MovieReviews />} />
+
       </Routes>
     </BrowserRouter>
   );
