@@ -15,11 +15,13 @@ import { removeMovieFromLiked } from "../store";
 import video from "../assets/video.mp4";
 import movie_1 from "../assets/posters/movie_1.jpg";
 import movie_2 from "../assets/posters/movie_2.jpg";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 
 export default React.memo(function Card({ index, movieData, isLiked = false, handleDeleteMovie, handleEditMovie }) {
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
+  console.log(movieData)
 
   return (
     <Container
@@ -28,7 +30,8 @@ export default React.memo(function Card({ index, movieData, isLiked = false, han
     >
       <img
         // src={`https://image.tmdb.org/t/p/w500${movieData.image}`}
-        src={movie_1}
+        src={movieData.avatar_url}
+        // placeholderSrc={movie_1}
         alt="card"
         onClick={() => navigate("/player")}
       />
@@ -38,7 +41,7 @@ export default React.memo(function Card({ index, movieData, isLiked = false, han
           <div className="image-video-container">
             <img
               // src={`https://image.tmdb.org/t/p/w500${movieData.image}`}
-              src={movie_2}
+              src={movie_1}
               alt="card"
               onClick={() => navigate("/player")}
             />

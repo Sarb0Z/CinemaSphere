@@ -16,10 +16,12 @@ import video from "../assets/video.mp4";
 import movie_1 from "../assets/posters/movie_1.jpg";
 import movie_2 from "../assets/posters/movie_2.jpg";
 import { supabase } from "../lib/supabase";
+import Navbar from "../components/Navbar";
 
 const MovieReviews = () => {
   const [session, setSession] = useState(null)
   const navigate = useNavigate();
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const { movieId } = useParams();
   // console.log(movieId);
@@ -65,6 +67,11 @@ const MovieReviews = () => {
     navigate("/login");
   }
 
+  window.onscroll = () => {
+    setIsScrolled(window.pageYOffset === 0 ? false : true);
+    return () => (window.onscroll = null);
+  };
+
   useEffect(() => {
     console.log(movieId);
 
@@ -79,14 +86,19 @@ const MovieReviews = () => {
     const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/Reviews`, newReview);
 
     // Update reviews state and clear the form
-    setReviews([...reviews, response.data]);
-    setNewReview({ description: "",rating: 0, created_by: session.user.id, movie_id: movieId });
+    // setReviews([...reviews, response.data]);
+    // setNewReview({ description: "",rating: 0, created_by: session.user.id, movie_id: movieId });
+
+    fetchReviews();
   };
 
   return (
     <Container>
+      <div className="navbar">
+        <Navbar isScrolled={isScrolled} sessionData={session}/>
+      </div>
       {movieData && <MovieHeader movieData={movieData} /> }
-      {reviews && <ReviewSection reviews={reviews} /> }
+      {reviews && <ReviewSection reviews={reviews} session ={session} fetchReviews={fetchReviews}/> }
       <WriteReviewSection newReview={newReview} setNewReview={setNewReview} handleReviewSubmit={handleReviewSubmit} />
     </Container>
   );
@@ -145,7 +157,7 @@ const MovieHeader = ({ movieData }) => {
   );
 };
 
-const ReviewSection = ({ reviews }) => {
+const ReviewSection = ({ reviews , session, fetchReviews}) => {
   return (
     <div className="review-section">
       <h2>Reviews</h2>
@@ -154,7 +166,7 @@ const ReviewSection = ({ reviews }) => {
       ) : (
         <ul className="reviews-list">
           {reviews.map((review) => (
-            <ReviewItem key={review.id} review={review} />
+            <ReviewItem key={review.id} review={review} session={session} fetchReviews={fetchReviews}/>
           ))}
         </ul>
       )}
@@ -197,7 +209,7 @@ const ReviewSection = ({ reviews }) => {
 //   );
 // };
 
-const ReviewItem = ({ review, session }) => {
+const ReviewItem = ({ review, session, fetchReviews}) => {
   const [reviewUser, setReviewUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [updatedReview, setUpdatedReview] = useState(review.description);
@@ -209,10 +221,15 @@ const ReviewItem = ({ review, session }) => {
 
   useEffect(() => {
     fetchReviewUser();
+    // console.log(session.user.id);
+    // console.log(review.created_by);
+    console.log(reviewUser);
   }, []);
 
   const handleEditClick = () => {
     setIsEditing(true);
+    setUpdatedReview(review.description);
+
   };
 
   const handleCancelClick = () => {
@@ -232,18 +249,29 @@ const ReviewItem = ({ review, session }) => {
     // Update the review in the state
     // setReviews(reviews.map((r) => (r.id === review.id ? response.data : r)));
     setIsEditing(false);
+    fetchReviews();
+  };
+
+  const handleDeleteClick = async () => {
+    // Delete the review from the backend
+    await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/Reviews/${review.id}`);
+
+    // Remove the review from the state
+    // setReviews(reviews.filter((r) => r.id !== review.id));
+    fetchReviews();
   };
 
   return (
     <li className="review-item">
-      {reviewUser && 
-      <div className="user-info flex">
-        <img src={reviewUser.avatar_url} alt="user avatar" />
-        <div className="user-details">
-          <h3>{reviewUser.full_name}</h3>
-          <p>{review.created_at}</p>
+      {reviewUser && (
+        <div className="user-info flex">
+          <img src={reviewUser[0].avatar_url} alt="user avatar" />
+          <div className="user-details">
+            <h3>{reviewUser[0].full_name}</h3>
+            {/* <p>{review.created_at}</p> */}
+          </div>
         </div>
-      </div> }
+      )}
 
       {isEditing ? (
         <textarea
@@ -263,7 +291,7 @@ const ReviewItem = ({ review, session }) => {
         ))}
       </div>
 
-      {session.user.id === review.created_by && (
+      {session && session.user.id === review.created_by && (
         <div className="edit-buttons">
           {isEditing ? (
             <>
@@ -271,7 +299,10 @@ const ReviewItem = ({ review, session }) => {
               <button onClick={handleCancelClick}>Cancel</button>
             </>
           ) : (
+          <div>
             <button onClick={handleEditClick}>Edit</button>
+            <button onClick={handleDeleteClick}>Delete</button>
+          </div>
           )}
         </div>
       )}

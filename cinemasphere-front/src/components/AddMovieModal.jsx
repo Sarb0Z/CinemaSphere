@@ -5,8 +5,9 @@ import { supabase } from "../lib/supabase";
 import { BsX } from "react-icons/bs";
 import postUserMovie from "../api/postUserMovie";
 import { tmdbGenres } from "../utils/tmdbGenres"; // Import the TMDb genre list
+import fetchMovies from "../api/fetchMovies";
 
-const AddMovieModal = ({ showModal, setShowModal, session, selectedMovie }) => {
+const AddMovieModal = ({ showModal, setShowModal, session, selectedMovie , setMovies}) => {
   const [movieName, setMovieName] = useState(selectedMovie ? selectedMovie.name : "");
   const [movieDescription, setMovieDescription] = useState(selectedMovie ? selectedMovie.description : "");
   const [movieAvatarUrl, setMovieAvatarUrl] = useState(selectedMovie ? selectedMovie.avatar_url : "");
@@ -25,12 +26,14 @@ const AddMovieModal = ({ showModal, setShowModal, session, selectedMovie }) => {
         genres: movieGenres,
     }, setResponse);
 
+    fetchMovies(setMovies);
     setMovieName("");
     setMovieDescription("");
     setMovieAvatarUrl("");
     setMovieGenres([]);
     setMovieGenresInput("");
     setShowModal(false);
+
   }
 
   const handleUpdateMovie = async (e) => {

@@ -8,7 +8,7 @@ import { supabase } from "../lib/supabase";
 import fetchMovies from "../api/fetchMovies";
 import AddMovieModal from "../components/AddMovieModal";
 import axios from "axios";
-
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const UserListedMovies = () => {
   // const movies = useSelector((state) => state.netflix.movies);
@@ -131,6 +131,7 @@ const UserListedMovies = () => {
             session={session}
             selectedMovie={selectedMovie}
             handleUpdateMovie={handleUpdateMovie}
+            setMovies={setMovies}
           />
         )}
         

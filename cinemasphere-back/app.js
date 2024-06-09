@@ -33,7 +33,7 @@ app.get('/api/Users/:id', async (req, res) => {
     const {data, error} = await supabase
         .from('profiles')
         .select()
-        .is('id', req.params.id)
+        .match({id: req.params.id})
     res.send(data);
 });
 
