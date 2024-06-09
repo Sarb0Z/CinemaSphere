@@ -230,7 +230,7 @@ const ReviewItem = ({ review, session }) => {
     });
 
     // Update the review in the state
-    setReviews(reviews.map((r) => (r.id === review.id ? response.data : r)));
+    // setReviews(reviews.map((r) => (r.id === review.id ? response.data : r)));
     setIsEditing(false);
   };
 
