@@ -28,9 +28,11 @@ export default React.memo(function Card({ index, movieData, isLiked = false, han
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {/* https://picsum.photos */}
       <img
         // src={`https://image.tmdb.org/t/p/w500${movieData.image}`}
         src={movieData.avatar_url}
+        // https://source.unsplash.com/random/80x80?sig=${Math.random()}`
         // placeholderSrc={movie_1}
         alt="card"
         onClick={() => navigate("/player")}
